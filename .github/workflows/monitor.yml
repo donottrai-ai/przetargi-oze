@@ -2,7 +2,7 @@ name: Monitor przetargów OZE
 
 on:
   schedule:
-    - cron: '0 * * * *'   # co godzinę
+    - cron: '30 10,12,14 * * *'   # o 10:30, 12:30 i 14:30
   workflow_dispatch:        # ręczne uruchomienie z GUI GitHub
 
 jobs:
