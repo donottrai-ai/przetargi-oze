@@ -2,8 +2,8 @@ name: Monitor przetargów OZE
 
 on:
   schedule:
-    - cron: '30 10,12,14 * * *'   # o 10:30, 12:30 i 14:30
-  workflow_dispatch:        # ręczne uruchomienie z GUI GitHub
+    - cron: '30 10,12,14 * * *'
+  workflow_dispatch:
 
 jobs:
   monitor:
@@ -12,13 +12,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Cache bazy SQLite między uruchomieniami (opcjonalne, ale przydatne)
       - name: Przywróć bazę danych
         uses: actions/cache@v4
         with:
           path: przetargi_oze.db
           key: przetargi-db-v2-${{ github.run_id }}
-          restore-keys: przetargi-db-
+          restore-keys: przetargi-db-v2-
 
       - name: Zainstaluj Python
         uses: actions/setup-python@v5
