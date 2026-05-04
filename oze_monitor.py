@@ -17,7 +17,7 @@ from datetime import datetime, timedelta
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")   # token od @BotFather
 TELEGRAM_CHAT_ID   = os.getenv("TELEGRAM_CHAT_ID", "")     # twoje chat_id
 DB_PATH            = "przetargi_oze.db"
-API_BASE           = "https://ezamowienia.gov.pl/mo-board/api/v1/Board/GetNoticeList"
+API_BASE = "https://ezamowienia.gov.pl/mo-client-board/api/notices"
 
 # Kody CPV branży OZE
 CPV_OZE = [
