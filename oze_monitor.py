@@ -6,20 +6,11 @@ import requests
 import sqlite3
 import os
 import logging
-from datetime import datetime
 from bs4 import BeautifulSoup
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID   = os.getenv("TELEGRAM_CHAT_ID", "")
 DB_PATH            = "przetargi_oze.db"
-
-KEYWORDS_OZE = [
-    "fotowoltai", "panele słoneczne", "pompa ciepła", "pompy ciepła",
-    "energia odnawialna", "oze", "turbina wiatrowa", "farma wiatrowa",
-    "magazyn energii", "mikroinstalacja", "instalacja pv",
-    "elektrownia słoneczna", "biomasa", "biogaz", "geotermia",
-    "termomodernizacja", "transformacja energetyczna",
-]
 
 SEARCH_URL = "https://przetargi.gov.pl/index.php"
 
@@ -59,7 +50,8 @@ def save(con, p):
 def fetch_notices():
     headers = {"User-Agent": "Mozilla/5.0"}
     results = []
-    for keyword in ["fotowoltai", "pompa ciepła", "OZE", "energia odnawialna", "magazyn energii"]:
+    keywords = ["fotowoltai", "pompa ciepla", "OZE", "energia odnawialna", "magazyn energii"]
+    for keyword in keywords:
         try:
             params = {"szukaj": keyword, "strona": 1}
             r = requests.get(SEARCH_URL, params=params, headers=headers, timeout=15)
@@ -73,14 +65,14 @@ def fetch_notices():
                 link = row.find("a", href=True)
                 if not link:
                     continue
-                url  = "https://przetargi.gov.pl/" + link["href"]
-                uid  = link["href"]
+                url   = "https://przetargi.gov.pl/" + link["href"]
+                uid   = link["href"]
                 title = link.get_text(strip=True)
                 date  = cols[-1].get_text(strip=True) if cols else ""
                 results.append(dict(id=uid, tytul=title, zamawiajacy="", data_pub=date, termin="", url=url))
-            log.info(f"Słowo '{keyword}': {len(rows)} wierszy")
+            log.info(f"Slowo '{keyword}': {len(rows)} wierszy")
         except Exception as e:
-            log.warning(f"Błąd dla '{keyword}': {e}")
+            log.warning(f"Blad dla '{keyword}': {e}")
     return results
 
 
@@ -92,7 +84,7 @@ def send_telegram(p):
         f"🌱 *Nowy przetarg OZE*\n\n"
         f"📋 *{p['tytul']}*\n"
         f"📅 Data: {p['data_pub']}\n"
-        f"🔗 [Ogłoszenie]({p['url']})"
+        f"🔗 [Ogloszenie]({p['url']})"
     )
     try:
         requests.post(
@@ -102,7 +94,7 @@ def send_telegram(p):
             timeout=10
         )
     except Exception as e:
-        log.error(f"Błąd Telegram: {e}")
+        log.error(f"Blad Telegram: {e}")
 
 
 def run():
@@ -115,7 +107,7 @@ def run():
             save(con, p)
             send_telegram(p)
             nowe += 1
-    log.info(f"=== Koniec: {nowe} nowych przetargów ===")
+    log.info(f"=== Koniec: {nowe} nowych przetargow ===")
     con.close()
 
 
